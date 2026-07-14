@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+cohere
+pinecone
+python-dotenv
+openai
+pypdf

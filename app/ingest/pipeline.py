@@ -2,6 +2,7 @@ import os
 import time
 import unicodedata
 from pypdf import PdfReader
+from app.ingest.clean import strip_repeated_lines
 from app.clients.embeddings import embed_documents
 from app.clients.vectorstore import upsert
 from app.config import DEFAULT_NAMESPACE
@@ -21,7 +22,8 @@ def normalize(text):
 def read_file(path):
     if path.endswith(".pdf"):
         reader = PdfReader(path)
-        raw = "\n".join((page.extract_text() or "") for page in reader.pages)
+        pages = [(page.extract_text() or "") for page in reader.pages]
+        raw = "\n".join(strip_repeated_lines(pages))
     else:
         with open(path, "r", encoding="utf-8", errors="ignore") as f:
             raw = f.read()

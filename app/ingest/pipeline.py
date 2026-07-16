@@ -1,21 +1,31 @@
 import os
+import time
+import unicodedata
 from pypdf import PdfReader
 from app.clients.embeddings import embed_documents
 from app.clients.vectorstore import upsert
 from app.config import DEFAULT_NAMESPACE
 
 DATA_DIR = "data"
-CHUNK_SIZE = 1000
-OVERLAP = 150
-BATCH = 90
+CHUNK_SIZE = 450
+OVERLAP = 80
+BATCH = 48
+PAUSE = 20
+
+
+def normalize(text):
+    text = unicodedata.normalize("NFKD", text)
+    return text.replace("\u2019", "'").replace("\u201c", '"').replace("\u201d", '"')
 
 
 def read_file(path):
     if path.endswith(".pdf"):
         reader = PdfReader(path)
-        return "\n".join((page.extract_text() or "") for page in reader.pages)
-    with open(path, "r", encoding="utf-8", errors="ignore") as f:
-        return f.read()
+        raw = "\n".join((page.extract_text() or "") for page in reader.pages)
+    else:
+        with open(path, "r", encoding="utf-8", errors="ignore") as f:
+            raw = f.read()
+    return normalize(raw)
 
 
 def chunk_text(text):
@@ -28,19 +38,31 @@ def chunk_text(text):
     return chunks
 
 
+def embed_with_retry(batch, tries=5):
+    for attempt in range(tries):
+        try:
+            return embed_documents(batch)
+        except Exception as e:
+            if "429" not in str(e) and "rate limit" not in str(e).lower():
+                raise
+            wait = 30 * (attempt + 1)
+            print(f"  rate limited, waiting {wait}s...")
+            time.sleep(wait)
+    raise RuntimeError("still rate limited after retries")
+
+
 def ingest(namespace=DEFAULT_NAMESPACE):
     total = 0
     for name in sorted(os.listdir(DATA_DIR)):
         if not name.endswith((".pdf", ".txt")):
             continue
         path = os.path.join(DATA_DIR, name)
-        text = read_file(path)
-        chunks = chunk_text(text)
+        chunks = chunk_text(read_file(path))
         print(f"{name}: {len(chunks)} chunks")
 
         for i in range(0, len(chunks), BATCH):
             batch = chunks[i:i + BATCH]
-            vectors = embed_documents(batch)
+            vectors = embed_with_retry(batch)
             records = [
                 (
                     f"{name}-{i + j}",
@@ -51,6 +73,8 @@ def ingest(namespace=DEFAULT_NAMESPACE):
             ]
             upsert(records, namespace=namespace)
             total += len(records)
+            print(f"  {total} chunks done")
+            time.sleep(PAUSE)
 
     print(f"Done. {total} chunks upserted to namespace '{namespace}'.")
 

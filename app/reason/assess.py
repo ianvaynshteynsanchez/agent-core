@@ -97,13 +97,9 @@ def run(limit=10):
     pv, ptext = current_profile(conn)
     print(f"using profile v{pv}\n")
 
-    opps = conn.execute(
-        """SELECT * FROM opportunity
-           WHERE description IS NOT NULL AND description != ''
-           ORDER BY due_date
-           LIMIT ?""",
-        (limit,),
-    ).fetchall()
+    from app.reason.filter import shortlist
+    opps = [r for r in shortlist(verbose=False)
+            if r.get("description")][:limit]
 
     if not opps:
         raise SystemExit("No opportunities with descriptions. Fetch details first.")

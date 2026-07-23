@@ -1,0 +1,22 @@
+[23:58:10] start      pipeline run 2026-07-23T03:58:10.434599+00:00
+searching: "drug delivery"
+searching: "long acting injectable"
+searching: "controlled release"
+searching: "implantable device"
+searching: "drug device combination"
+searching: "sustained release"
+searching: "extended release"
+searching: "depot formulation"
+searching: "medication adherence"
+searching: implant
+searching: reformulation
+
+21 opportunities seen, 0 new
+[23:58:14] poll       0 new opportunities
+[23:58:14] fetch      58 missing descriptions
+[23:58:48] fetch      58 fetched
+[23:58:49] assess     0 to assess (profile v2)
+[23:58:49] assess     done, 0 tokens
+wrote dashboard.html: 2 pursue, 0 maybe, 3 watching, 13 skip
+[23:58:49] dash       dashboard.html rebuilt
+[23:58:49] done       completed in 39s

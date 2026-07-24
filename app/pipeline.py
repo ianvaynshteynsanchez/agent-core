@@ -10,12 +10,8 @@ from datetime import datetime, timezone
 
 from app.db.store import connect
 
-KEYWORDS = [
-    '"drug delivery"', '"long acting injectable"', '"controlled release"',
-    '"implantable device"', '"drug device combination"', '"sustained release"',
-    '"extended release"', '"depot formulation"', '"medication adherence"',
-    "implant", "reformulation",
-]
+from app.profile.load import search_keywords
+
 
 
 def log(stage, msg):
@@ -35,7 +31,7 @@ def stage(name, fn, *args, **kwargs):
 
 def do_poll():
     from app.sources.poll import poll
-    new_ids = poll(KEYWORDS, fetch_details=False)
+    new_ids = poll(search_keywords(), fetch_details=False)
     log("poll", f"{len(new_ids)} new opportunities")
     return new_ids
 
@@ -106,6 +102,10 @@ def do_prune():
     allrows = [r["opportunity_id"] for r in
                conn.execute("SELECT opportunity_id FROM assessment")]
     stale = [o for o in allrows if o not in ids]
+    if len(stale) > len(allrows) * 0.3:
+        log("prune", f"REFUSING to prune {len(stale)}/{len(allrows)} - looks like a bad poll")
+        conn.close()
+        return 0
     for o in stale:
         conn.execute("DELETE FROM assessment WHERE opportunity_id=?", (o,))
     conn.commit()

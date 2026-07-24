@@ -1,24 +1,19 @@
-# Coarse keyword gate. Deliberately high-recall: catch anything plausibly
-# drug-delivery, let the LLM reasoner make the real call. Cheap, no tokens.
+import re
 
-RELEVANT = [
-    "drug delivery", "long acting", "long-acting", "controlled release",
-    "sustained release", "extended release", "depot", "implant",
-    "drug device", "drug-device", "biodegradable polymer", "bioresorbable",
-    "reformulation", "medication adherence", "contracept", "burst release",
-    "subcutaneous", "subdermal", "transdermal", "formulation",
-    "therapeutic delivery", "biomaterial", "SBIR", "STTR",
-]
+from app.profile.load import relevance_terms
 
-# Hard excludes: agencies/domains that can't plausibly fit, to kill obvious noise.
-EXCLUDE_TITLE = [
-    "astrophysics", "aircraft", "fire training", "border security",
-    "mine health", "SNAP", "artificial intelligence advancing",
-]
+_TERMS = None
+
+
+def _load():
+    global _TERMS
+    if _TERMS is None:
+        _TERMS = [(t, re.compile(rf"\b{re.escape(t)}\b")) for t in relevance_terms()]
+    return _TERMS
 
 
 def is_relevant(opp):
+    """Coarse gate: does any client-vocabulary term appear as a whole word?
+    Deliberately high-recall - the reasoner makes the real call."""
     hay = f"{opp.get('title','')} {opp.get('description','') or ''}".lower()
-    if any(x.lower() in hay for x in EXCLUDE_TITLE):
-        return False
-    return any(k.lower() in hay for k in RELEVANT)
+    return any(rx.search(hay) for _, rx in _load())

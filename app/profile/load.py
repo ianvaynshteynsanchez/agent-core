@@ -50,7 +50,14 @@ def search_keywords(md=None):
     """Broad nets for the API. Falls back to agency terms if none defined."""
     md = md or active()[1]
     vocab = _section(md, "Vocabulary")
-    terms = _terms(vocab, "Search terms") or _terms(vocab, "Agency terms")
+    # Search both tiers: broad nets for volume, specific terms for precision.
+    seen, terms = set(), []
+    for label in ("Search terms", "Agency terms"):
+        for t in _terms(vocab, label):
+            k = t.strip().strip('"').lower()
+            if k and k not in seen:
+                seen.add(k)
+                terms.append(t)
     out = []
     for t in terms:
         t = t.strip().strip('"')

@@ -89,14 +89,25 @@ def do_assess():
 
     tokens = 0
     for opp in todo:
-        try:
-            data, t = assess_one(conn, opp, pv, ptext)
-            tokens += t
-            log("assess", f"  [{data.get('verdict','?'):6}] {opp['title'][:45]}")
-            conn.commit()
-        except Exception as e:
-            log("assess", f"  error on {opp['id']}: {e}")
-            time.sleep(5)
+        for attempt in range(3):
+            try:
+                data, t = assess_one(conn, opp, pv, ptext)
+                tokens += t
+                log("assess", f"  [{data.get('verdict','?'):6}] {opp['title'][:45]}")
+                conn.commit()
+                break
+            except Exception as e:
+                msg = str(e)
+                if "rate_limit" in msg or "429" in msg:
+                    if "per day" in msg or "TPD" in msg:
+                        log("assess", "  DAILY TOKEN LIMIT reached - stopping assess stage")
+                        return tokens
+                    wait = 30 * (attempt + 1)
+                    log("assess", f"  rate limited, waiting {wait}s")
+                    time.sleep(wait)
+                    continue
+                log("assess", f"  error on {opp['id']}: {e}")
+                break
     conn.close()
     log("assess", f"done, {tokens} tokens")
     return tokens

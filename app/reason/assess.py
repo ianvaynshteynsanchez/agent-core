@@ -33,7 +33,24 @@ Decide: is this worth pursuing? Respond with ONLY a JSON object, no other text:
 
 Judge on capability and modality, not disease area alone. A perfect disease-area
 match with the wrong modality is a SKIP. Reward matches on the problem the agency
-wants solved, not on surface keywords."""
+wants solved, not on surface keywords.
+
+CHOOSING THE VERDICT - this matters:
+- "pursue": the capability match is clear AND no disqualifying barrier.
+- "skip": definite mismatch in modality/capability, OR an explicit exclusion
+  or eligibility rule that rules the company out.
+- "maybe": use whenever the answer depends on something you cannot determine
+  from the text. Typical cases: capability fits but eligibility is unclear
+  (prior-award requirements, prime vs partner rules); the solicitation is
+  vague; or it fits one part of the profile and conflicts with another.
+
+Do NOT force a borderline case to pursue or skip. If you find yourself
+writing "may not align" or "it is crucial to ensure" or "would need to
+confirm", that is a maybe, not a confident verdict. An honest maybe is more
+useful than a confident guess - a human resolves it in one minute.
+
+Set "confidence" as confidence in the VERDICT itself. For a maybe, put the
+specific unresolved question first in "concerns"."""
 
 
 def current_profile(conn):

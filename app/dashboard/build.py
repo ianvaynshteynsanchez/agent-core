@@ -44,8 +44,13 @@ def gather():
     pursue = [dict(r) for r in assessed if r["verdict"] == "pursue"]
     maybe = [dict(r) for r in assessed if r["verdict"] == "maybe"]
     skip = [dict(r) for r in assessed if r["verdict"] == "skip"]
-    for grp in (pursue, maybe, skip):
+    # Pursue: most confident first. Skip: same.
+    for grp in (pursue, skip):
         grp.sort(key=lambda x: (-(x["confidence"] or 0)))
+    # Maybe is a triage queue: best fit at the top, weakest at the bottom.
+    # Low verdict-confidence on a maybe means "closer to a real candidate",
+    # so we surface those first and let clear near-misses sink.
+    maybe.sort(key=lambda x: (x["confidence"] or 0))
     return pursue, maybe, skip, [dict(r) for r in watching]
 
 

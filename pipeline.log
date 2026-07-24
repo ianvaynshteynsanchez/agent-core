@@ -20,3 +20,28 @@ searching: reformulation
 wrote dashboard.html: 2 pursue, 0 maybe, 3 watching, 13 skip
 [23:58:49] dash       dashboard.html rebuilt
 [23:58:49] done       completed in 39s
+[08:11:31] start      pipeline run 2026-07-23T12:11:31.421778+00:00
+searching: "drug delivery"
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+searching: "long acting injectable"
+searching: "controlled release"
+searching: "implantable device"
+searching: "drug device combination"
+searching: "sustained release"
+searching: "extended release"
+searching: "depot formulation"
+searching: "medication adherence"
+searching: implant
+searching: reformulation
+
+16 opportunities seen, 0 new
+[08:43:56] poll       0 new opportunities
+[08:43:57] fetch      58 missing descriptions
+[08:44:28] fetch      58 fetched
+[08:44:30] assess     0 to assess (profile v2)
+[08:44:30] assess     done, 0 tokens
+wrote dashboard.html: 2 pursue, 0 maybe, 3 watching, 13 skip
+[08:44:30] dash       dashboard.html rebuilt
+[08:44:30] done       completed in 1979s

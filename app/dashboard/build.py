@@ -9,7 +9,7 @@ OUT = "dashboard.html"
 
 
 def _esc(s):
-    return html.escape(str(s or ""))
+    return html.escape(html.unescape(str(s or "")))
 
 
 def _days(due):

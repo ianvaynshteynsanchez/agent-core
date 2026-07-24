@@ -1,0 +1,77 @@
+"""Measure reasoner agreement against hand-labeled verdicts.
+
+Labels live in evals/verdicts.txt, one per line:
+    <opportunity_id> | <expected verdict> | <note>
+Lines starting with # are ignored.
+"""
+import sys
+from app.db.store import connect
+from app.reason.assess import assess_one, current_profile
+
+LABELS = "evals/verdicts.txt"
+
+
+def load_labels():
+    out = []
+    with open(LABELS) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = [p.strip() for p in line.split("|")]
+            if len(parts) >= 2:
+                out.append((parts[0], parts[1].lower(), parts[2] if len(parts) > 2 else ""))
+    return out
+
+
+def run(live=False):
+    labels = load_labels()
+    if not labels:
+        raise SystemExit(f"No labels in {LABELS}")
+
+    conn = connect()
+    pv, ptext = current_profile(conn)
+    print(f"profile v{pv} | {len(labels)} labeled cases | {'re-running' if live else 'reading stored'}\n")
+
+    agree = disagree = missing = 0
+    for oid, expected, note in labels:
+        opp = conn.execute("SELECT * FROM opportunity WHERE id=?", (oid,)).fetchone()
+        if not opp:
+            print(f"  MISSING  {oid}")
+            missing += 1
+            continue
+
+        if live:
+            data, _ = assess_one(conn, dict(opp), pv, ptext)
+            actual = (data.get("verdict") or "").lower()
+            rationale = data.get("rationale", "")
+        else:
+            row = conn.execute(
+                "SELECT verdict, rationale FROM assessment WHERE opportunity_id=? "
+                "ORDER BY profile_version DESC LIMIT 1", (oid,)).fetchone()
+            if not row:
+                print(f"  NOASSESS {opp['title'][:50]}")
+                missing += 1
+                continue
+            actual, rationale = row["verdict"], row["rationale"]
+
+        if actual == expected:
+            agree += 1
+            print(f"  PASS  {expected:6} {opp['title'][:55]}")
+        else:
+            disagree += 1
+            print(f"  FAIL  expected {expected:6} got {actual:6}  {opp['title'][:45]}")
+            if note:
+                print(f"        why it matters: {note}")
+            print(f"        model said: {rationale[:160]}...")
+
+    conn.commit()
+    conn.close()
+    total = agree + disagree
+    pct = (agree / total * 100) if total else 0
+    print(f"\n  {agree}/{total} agree ({pct:.0f}%)  |  {missing} missing")
+    return pct
+
+
+if __name__ == "__main__":
+    run(live="--live" in sys.argv)

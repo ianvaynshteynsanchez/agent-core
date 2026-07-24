@@ -1,0 +1,23 @@
+# Reasoner eval set. Expected verdicts are MY judgment, not the model's.
+# Format: opportunity_id | expected | why this case matters
+
+# --- the hard ones: right surface, wrong substance ---
+grants_gov:360583 | skip | contraception is Hera's LEAD area - perfect disease match, but X01 grants facility access, not delivery funding. Wrong transaction type.
+grants_gov:356982 | skip | BRAIN neural implant. "implant" is the trap term - structurally identical word, unrelated tech.
+grants_gov:356531 | skip | small molecule drug DISCOVERY. Hera reformulates approved drugs, never discovers.
+grants_gov:357529 | skip | Alzheimer's drug-development. Disease-area science, not delivery.
+
+# --- explicit exclusions the model must catch by reading ---
+grants_gov:362062 | skip | EBBS text explicitly excludes drug delivery as a main goal.
+grants_gov:348796 | skip | excludes proposals centered on drug design and delivery.
+
+# --- gate leakage: reasoner must reject what keywords let through ---
+grants_gov:349654 | skip | condensed matter physics. Leaked via "materials"/"polymer" substring.
+grants_gov:346204 | skip | circuits and sensing. Obvious gate leak, must be rejected.
+
+# --- the pursues: must NOT be over-skipped ---
+grants_gov:359671 | pursue | NIH SBIR parent. Right mechanism, right stage, right business model.
+grants_gov:359758 | pursue | SBIR Phase IIB. Later-stage commercialization support fits licensing model.
+
+# --- genuinely debatable: flag if you disagree with the model ---
+grants_gov:359669 | maybe | CRP commercialization. Model said skip. Arguably a maybe - it IS commercialization support, but requires prior NIH SBIR (Hera's is NSF). Eligibility question, not fit question.

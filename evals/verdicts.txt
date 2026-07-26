@@ -20,4 +20,4 @@ grants_gov:359671 | pursue | NIH SBIR parent. Right mechanism, right stage, righ
 grants_gov:359758 | pursue | SBIR Phase IIB. Later-stage commercialization support fits licensing model.
 
 # --- genuinely debatable: flag if you disagree with the model ---
-grants_gov:359669 | maybe | CRP commercialization. Model said skip. Arguably a maybe - it IS commercialization support, but requires prior NIH SBIR (Hera's is NSF). Eligibility question, not fit question.
+grants_gov:359669 | skip  | CRP commercialization. Model said skip. Arguably a maybe - it IS commercialization support, but requires prior NIH SBIR (Hera's is NSF). Eligibility question, not fit question.

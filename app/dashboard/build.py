@@ -28,7 +28,7 @@ def gather():
     pv = conn.execute("SELECT MAX(version) v FROM profile").fetchone()["v"]
     assessed = conn.execute(
         """SELECT a.verdict, a.confidence, a.rationale, a.evidence, a.days_to_due,
-                  o.id, o.title, o.agency, o.due_date, o.url, o.status
+                  o.id, o.native_id, o.title, o.agency, o.due_date, o.url, o.status
            FROM assessment a JOIN opportunity o ON a.opportunity_id = o.id
            WHERE a.profile_version = ?""",
         (pv,),
@@ -65,6 +65,37 @@ def gather():
     return pursue, maybe, skip, [dict(r) for r in watching], [dict(r) for r in just_opened]
 
 
+def brief_block(opp_id):
+    """Render the cached detail brief for an opportunity, if any."""
+    from app.db.store import connect
+    import json as _json
+    conn = connect()
+    row = conn.execute(
+        "SELECT status, answers, url FROM brief WHERE opportunity_id=?", (opp_id,)
+    ).fetchone()
+    conn.close()
+    if not row:
+        return ""
+
+    if row["status"] != "ok":
+        return ('<div class="brief pending">Full announcement not yet published '
+                '\u2014 flagged early, before its synopsis exists.</div>')
+
+    answers = _json.loads(row["answers"]) if row["answers"] else {}
+    labels = {"eligibility": "Eligibility", "budget": "Budget & period",
+              "deadlines": "Deadlines", "scope": "Scope"}
+    rows = ""
+    for key in ("eligibility", "budget", "deadlines", "scope"):
+        a = answers.get(key)
+        if a:
+            rows += (f"<div class='brief-row'><span class='bl'>{labels[key]}</span>"
+                     f"<span class='bv'>{_esc(a.get('answer',''))}</span></div>")
+    src = (f"<a href='{_esc(row['url'] or '#')}' target='_blank' "
+           f"class='brief-src'>full announcement \u2197</a>")
+    return (f"<details class='brief'><summary>What you'd need to know to apply</summary>"
+            f"{rows}{src}</details>")
+
+
 def card(a, dim=False):
     ev = {}
     try:
@@ -97,6 +128,7 @@ def card(a, dim=False):
         {'<div class="matched"><h4>Matched on</h4><ul>' + matched_html + '</ul></div>' if matched else ''}
         {'<div class="concerns"><h4>Concerns</h4><ul>' + concerns_html + '</ul></div>' if concerns else ''}
       </div>
+      {brief_block(a.get('id',''))}
     </article>"""
 
 
@@ -222,6 +254,26 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .opened li a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
 .opened li a:hover{color:var(--go)}
 .opened .meta{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:3px}
+.brief{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.brief summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.05em}
+.brief.pending{font-family:var(--mono);font-size:12px;color:var(--dim);font-style:italic}
+.brief-row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin-top:10px;font-size:13px}
+.brief-row .bl{color:var(--dim);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+.brief-row .bv{color:#c9d1d9;line-height:1.5}
+.brief-src{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none}
+@media(max-width:560px){.brief-row{grid-template-columns:1fr}}
+
+.brief{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.brief summary{cursor:pointer;font-family:var(--mono);font-size:12px;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.05em}
+.brief.pending{font-family:var(--mono);font-size:12px;color:var(--dim);font-style:italic}
+.brief-row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin-top:10px;font-size:13px}
+.brief-row .bl{color:var(--dim);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+.brief-row .bv{color:#c9d1d9;line-height:1.5}
+.brief-src{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none}
+@media(max-width:560px){.brief-row{grid-template-columns:1fr}}
+
 
 .lane>summary{cursor:pointer;display:block}
 .lane>summary h2{display:inline-flex;align-items:baseline;gap:10px}

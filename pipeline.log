@@ -154,3 +154,43 @@ searching: "long acting reversible contraception"
 wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
 [10:51:26] dash       dashboard.html rebuilt
 [10:51:26] done       completed in 28s
+[08:01:50] start      pipeline run 2026-07-28T12:01:50.285605+00:00
+searching: "drug delivery"
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+106 opportunities seen, 1 new
+[08:02:13] poll       1 new opportunities
+[08:02:14] fetch      1 missing descriptions
+[08:02:14] fetch      1 fetched
+[08:02:38] assess     0 to assess (profile v4)
+[08:02:38] assess     done, 0 tokens
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[08:04:38] dash       dashboard.html rebuilt
+[08:04:38] done       completed in 168s

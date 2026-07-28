@@ -167,6 +167,13 @@ def do_prune():
     return len(stale)
 
 
+def do_briefs():
+    from app.detail.cache import refresh_pursues
+    built, total = refresh_pursues()
+    log("briefs", f"{built}/{total} pursue briefs available")
+    return built
+
+
 def do_dashboard():
     from app.dashboard.build import build
     build()
@@ -183,6 +190,7 @@ def run():
     stage("prune-v", do_prune_versions)
     stage("prune-v", do_prune_versions)
     stage("assess", do_assess)
+    stage("briefs", do_briefs)
     stage("dash", do_dashboard)
 
     secs = (datetime.now(timezone.utc) - started).total_seconds()

@@ -11,16 +11,32 @@ FIELDS = [
 
 
 def upsert(conn, row):
-    """Returns True if this is genuinely new (drives 'found it in time')."""
+    """Returns True if genuinely new. Detects forecasted->posted transitions."""
     existing = conn.execute(
-        "SELECT id FROM opportunity WHERE id = ?", (row["id"],)
+        "SELECT id, status, became_posted FROM opportunity WHERE id = ?",
+        (row["id"],),
     ).fetchone()
 
     if existing:
-        conn.execute(
-            "UPDATE opportunity SET last_seen=?, status=?, due_date=? WHERE id=?",
-            (row["last_seen"], row["status"], row["due_date"], row["id"]),
+        just_opened = (
+            existing["status"] == "forecasted"
+            and row["status"] == "posted"
+            and not existing["became_posted"]
         )
+        if just_opened:
+            conn.execute(
+                "UPDATE opportunity SET last_seen=?, status=?, due_date=?, "
+                "became_posted=? WHERE id=?",
+                (row["last_seen"], row["status"], row["due_date"],
+                 row["last_seen"], row["id"]),
+            )
+            conn.execute("DELETE FROM assessment WHERE opportunity_id=?", (row["id"],))
+            print(f"  >> JUST OPENED: {row['title'][:55]}")
+        else:
+            conn.execute(
+                "UPDATE opportunity SET last_seen=?, status=?, due_date=? WHERE id=?",
+                (row["last_seen"], row["status"], row["due_date"], row["id"]),
+            )
         return False
 
     cols = ", ".join(FIELDS)

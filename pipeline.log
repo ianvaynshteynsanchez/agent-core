@@ -73,3 +73,84 @@ wrote dashboard.html: 3 pursue, 0 maybe, 4 watching, 15 skip
 [08:58:37] dash       dashboard.html rebuilt
 [08:58:37] done       completed in 1521s
 [08:39:29] start      pipeline run 2026-07-25T12:39:29.597403+00:00
+[08:02:17] start      pipeline run 2026-07-26T12:02:17.628749+00:00
+searching: "drug delivery"
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+106 opportunities seen, 0 new
+[08:02:24] poll       0 new opportunities
+[08:02:24] fetch      0 missing descriptions
+[08:02:24] fetch      0 fetched
+[09:03:18] assess     0 to assess (profile v4)
+[09:03:18] assess     done, 0 tokens
+wrote dashboard.html: 1 pursue, 2 maybe, 4 watching, 30 skip
+[09:03:19] dash       dashboard.html rebuilt
+[09:03:19] done       completed in 3662s
+[10:50:58] start      pipeline run 2026-07-27T14:50:58.711961+00:00
+searching: "drug delivery"
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+106 opportunities seen, 0 new
+[10:51:21] poll       0 new opportunities
+[10:51:21] fetch      0 missing descriptions
+[10:51:21] fetch      0 fetched
+[10:51:23] prune      removed 1 stale assessments
+[10:51:25] assess     0 to assess (profile v4)
+[10:51:25] assess     done, 0 tokens
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[10:51:26] dash       dashboard.html rebuilt
+[10:51:26] done       completed in 28s

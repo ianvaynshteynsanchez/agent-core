@@ -25,10 +25,13 @@ def gather():
     conn = connect()
     ids = {r["id"] for r in shortlist(verbose=False)}
 
+    pv = conn.execute("SELECT MAX(version) v FROM profile").fetchone()["v"]
     assessed = conn.execute(
         """SELECT a.verdict, a.confidence, a.rationale, a.evidence, a.days_to_due,
                   o.id, o.title, o.agency, o.due_date, o.url, o.status
-           FROM assessment a JOIN opportunity o ON a.opportunity_id = o.id"""
+           FROM assessment a JOIN opportunity o ON a.opportunity_id = o.id
+           WHERE a.profile_version = ?""",
+        (pv,),
     ).fetchall()
 
     watching = conn.execute(
@@ -38,6 +41,14 @@ def gather():
             ",".join("?" * len(ids)) or "''"
         ),
         list(ids),
+    ).fetchall()
+    just_opened = conn.execute(
+        """SELECT id, title, agency, due_date, url, became_posted,
+                  julianday('now') - julianday(became_posted) AS days_ago
+           FROM opportunity
+           WHERE became_posted IS NOT NULL
+             AND julianday('now') - julianday(became_posted) <= 7
+           ORDER BY became_posted DESC"""
     ).fetchall()
     conn.close()
 
@@ -51,7 +62,7 @@ def gather():
     # Low verdict-confidence on a maybe means "closer to a real candidate",
     # so we surface those first and let clear near-misses sink.
     maybe.sort(key=lambda x: (x["confidence"] or 0))
-    return pursue, maybe, skip, [dict(r) for r in watching]
+    return pursue, maybe, skip, [dict(r) for r in watching], [dict(r) for r in just_opened]
 
 
 def card(a, dim=False):
@@ -102,7 +113,7 @@ def watch_card(w):
 
 
 def build():
-    pursue, maybe, skip, watching = gather()
+    pursue, maybe, skip, watching, just_opened = gather()
     stamp = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
     def section(title, items, sub, collapsed=False, watch=False):
@@ -114,8 +125,27 @@ def build():
                    f"<span class='chev'>\u203a</span></h2><p class='sub'>{sub}</p></summary>")
         return f"<details class='lane'{openattr}>{summary}{cards}</details>"
 
+    def opened_banner(items):
+        if not items:
+            return ""
+        rows = ""
+        for o in items:
+            days = o.get("days_ago")
+            ago = "today" if days is not None and days < 1 else f"{int(days)}d ago"
+            due = o.get("due_date") or "check announcement"
+            rows += (f"<li><a href=\"{_esc(o.get('url') or '#')}\" target=\"_blank\">"
+                     f"{_esc(o['title'])}</a>"
+                     f"<span class='meta'>opened {ago} \u00b7 due {_esc(due)} \u00b7 "
+                     f"{_esc(o.get('agency'))}</span></li>")
+        return (f"<section class='opened'><h2>\u26a1 Just opened "
+                f"<span class='count'>{len(items)}</span></h2>"
+                f"<p class='sub'>Opportunities you were watching are now open for "
+                f"application. These were flagged before their synopsis existed.</p>"
+                f"<ul>{rows}</ul></section>")
+
     body = (
-        section("Pursue", pursue, "Worth the proposal effort. Reasoning below.")
+        opened_banner(just_opened)
+        + section("Pursue", pursue, "Worth the proposal effort. Reasoning below.")
         + section("Maybe", maybe, "Borderline — read the concerns.")
         + section("Watching", watching, "Forecasted and relevant. Flagged early, before the synopsis is out.", watch=True)
         + section("Skip", skip, "Assessed and passed over. Expand to see why each was rejected.", collapsed=True)
@@ -183,6 +213,16 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .evidence li{margin-bottom:3px}
 .concerns h4{color:var(--warn)}
 .card.watch{border-style:dashed}
+.opened{background:rgba(63,185,80,.08);border:1px solid var(--go);
+  border-radius:12px;padding:20px 22px;margin:0 0 32px}
+.opened h2{font-family:var(--serif);font-size:20px;margin:0;color:var(--go);
+  display:inline-flex;align-items:baseline;gap:10px}
+.opened ul{list-style:none;margin:14px 0 0;padding:0}
+.opened li{padding:10px 0;border-top:1px solid var(--line)}
+.opened li a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.opened li a:hover{color:var(--go)}
+.opened .meta{display:block;font-family:var(--mono);font-size:12px;color:var(--dim);margin-top:3px}
+
 .lane>summary{cursor:pointer;display:block}
 .lane>summary h2{display:inline-flex;align-items:baseline;gap:10px}
 .chev{font-family:var(--mono);color:var(--dim);transition:transform .15s;display:inline-block}

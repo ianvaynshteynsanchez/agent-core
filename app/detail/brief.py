@@ -19,7 +19,7 @@ from app.ingest.pipeline import chunk_text
 QUESTIONS = [
     ("eligibility", "What organizations are eligible to apply? Are small businesses eligible? Any restrictions on foreign organizations?"),
     ("budget", "What is the award budget limit or ceiling? What is the maximum project period?"),
-    ("deadlines", "What are the application due dates?"),
+    ("deadlines", "In the Key Dates section, what are the application due dates for new applications? Give only the application due date(s), not review dates, council dates, or earliest start dates."),
     ("scope", "What kinds of projects does this fund? What is explicitly out of scope or non-responsive?"),
 ]
 

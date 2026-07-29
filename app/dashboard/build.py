@@ -88,7 +88,9 @@ def brief_block(opp_id):
     for key in ("eligibility", "budget", "deadlines", "scope"):
         a = answers.get(key)
         if a:
-            rows += (f"<div class='brief-row'><span class='bl'>{labels[key]}</span>"
+            note = (" <span class='verify'>\u26a0 verify against source</span>"
+                    if key == "deadlines" else "")
+            rows += (f"<div class='brief-row'><span class='bl'>{labels[key]}{note}</span>"
                      f"<span class='bv'>{_esc(a.get('answer',''))}</span></div>")
     src = (f"<a href='{_esc(row['url'] or '#')}' target='_blank' "
            f"class='brief-src'>full announcement \u2197</a>")
@@ -260,6 +262,7 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .brief.pending{font-family:var(--mono);font-size:12px;color:var(--dim);font-style:italic}
 .brief-row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin-top:10px;font-size:13px}
 .brief-row .bl{color:var(--dim);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+.verify{color:var(--warn);text-transform:none;font-size:10px}
 .brief-row .bv{color:#c9d1d9;line-height:1.5}
 .brief-src{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none}
 @media(max-width:560px){.brief-row{grid-template-columns:1fr}}
@@ -270,6 +273,7 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .brief.pending{font-family:var(--mono);font-size:12px;color:var(--dim);font-style:italic}
 .brief-row{display:grid;grid-template-columns:120px 1fr;gap:12px;margin-top:10px;font-size:13px}
 .brief-row .bl{color:var(--dim);font-family:var(--mono);font-size:11px;text-transform:uppercase}
+.verify{color:var(--warn);text-transform:none;font-size:10px}
 .brief-row .bv{color:#c9d1d9;line-height:1.5}
 .brief-src{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:12px;color:var(--accent);text-decoration:none}
 @media(max-width:560px){.brief-row{grid-template-columns:1fr}}

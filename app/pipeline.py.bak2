@@ -185,31 +185,10 @@ def do_dashboard():
     log("dash", "dashboard.html rebuilt")
 
 
-def wait_for_dns(host="api.grants.gov", timeout=600, interval=20):
-    """Block until host resolves, or timeout. Never aborts the run."""
-    import socket, time as _t
-    deadline = _t.monotonic() + timeout
-    attempt = 0
-    while _t.monotonic() < deadline:
-        try:
-            socket.getaddrinfo(host, 443)
-            if attempt:
-                log("net", f"DNS up after {attempt} retries")
-            return True
-        except socket.gaierror:
-            attempt += 1
-            if attempt == 1:
-                log("net", f"{host} not resolving, waiting up to {timeout}s")
-            _t.sleep(interval)
-    log("net", "DNS never came up; continuing anyway")
-    return False
-
-
 def run():
     started = datetime.now(timezone.utc)
     log("start", f"pipeline run {started.isoformat()}")
 
-    stage("net", wait_for_dns)
     stage("poll", do_poll)
     stage("fetch", do_fetch)
     stage("prune", do_prune)

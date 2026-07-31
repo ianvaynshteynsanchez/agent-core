@@ -239,3 +239,88 @@ searching: "long acting reversible contraception"
 wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
 [09:06:14] dash       dashboard.html rebuilt
 [09:06:14] done       completed in 968s
+[08:35:41] start      pipeline run 2026-07-30T12:35:41.060222+00:00
+searching: "drug delivery"
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+104 opportunities seen, 0 new
+[08:36:04] poll       0 new opportunities
+[08:36:05] fetch      0 missing descriptions
+[08:36:05] fetch      0 fetched
+[08:36:07] assess     0 to assess (profile v4)
+[08:36:07] assess     done, 0 tokens
+[08:36:09] briefs     0/1 pursue briefs available
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[08:36:09] dash       dashboard.html rebuilt
+[08:36:09] done       completed in 29s
+[08:21:25] start      pipeline run 2026-07-31T12:21:25.221950+00:00
+searching: "drug delivery"
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/search2 (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+98 opportunities seen, 0 new
+[09:00:06] poll       0 new opportunities
+[09:00:07] fetch      0 missing descriptions
+[09:00:07] fetch      0 fetched
+[09:00:11] assess     0 to assess (profile v4)
+[09:00:11] assess     done, 0 tokens
+[09:00:15] briefs     0/1 pursue briefs available
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[09:00:18] dash       dashboard.html rebuilt
+[09:00:18] done       completed in 2333s

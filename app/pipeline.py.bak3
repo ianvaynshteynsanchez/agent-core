@@ -134,6 +134,22 @@ def do_prune_versions():
     return n
 
 
+def do_prune_versions():
+    """Remove assessments from superseded profile versions. Prevents the
+    dashboard from stacking contradictory verdicts across versions."""
+    conn = connect()
+    pv = conn.execute("SELECT MAX(version) v FROM profile").fetchone()["v"]
+    n = conn.execute(
+        "SELECT COUNT(*) c FROM assessment WHERE profile_version < ?", (pv,)
+    ).fetchone()["c"]
+    if n:
+        conn.execute("DELETE FROM assessment WHERE profile_version < ?", (pv,))
+        conn.commit()
+        log("prune", f"removed {n} assessments from old profile versions")
+    conn.close()
+    return n
+
+
 def do_prune():
     """Drop assessments for opportunities no longer shortlisted (expired etc)."""
     from app.reason.filter import shortlist
@@ -197,6 +213,7 @@ def run():
     stage("poll", do_poll)
     stage("fetch", do_fetch)
     stage("prune", do_prune)
+    stage("prune-v", do_prune_versions)
     stage("prune-v", do_prune_versions)
     stage("assess", do_assess)
     stage("briefs", do_briefs)

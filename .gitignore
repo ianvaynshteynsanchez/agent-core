@@ -7,3 +7,5 @@ data/
 agent.db
 *.bak
 *.bak[0-9]
+*.bak
+*.bak[0-9]

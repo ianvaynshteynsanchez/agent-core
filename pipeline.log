@@ -324,3 +324,94 @@ searching: "long acting reversible contraception"
 wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
 [09:00:18] dash       dashboard.html rebuilt
 [09:00:18] done       completed in 2333s
+[08:55:40] start      pipeline run 2026-08-01T12:55:40.425834+00:00
+[08:55:40] net        api.grants.gov not resolving, waiting up to 600s
+[08:56:00] net        DNS up after 1 retries
+[08:56:00] net        took 20s
+searching: "drug delivery"
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+101 opportunities seen, 0 new
+[08:56:06] poll       0 new opportunities
+[08:56:06] poll       took 6s
+[08:56:06] fetch      91 missing descriptions
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+[11:48:36] fetch      91 fetched
+[11:48:36] fetch      took 112s
+[11:48:40] assess     0 to assess (profile v4)
+[11:48:40] assess     done, 0 tokens
+[11:48:42] briefs     0/1 pursue briefs available
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[11:48:42] dash       dashboard.html rebuilt
+[11:48:42] done       completed in 10382s
+[08:11:49] start      pipeline run 2026-08-02T12:11:49.898022+00:00
+searching: "drug delivery"
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+101 opportunities seen, 0 new
+[08:11:56] poll       0 new opportunities
+[08:11:56] poll       took 6s
+[08:11:56] fetch      0 missing descriptions
+[08:11:56] fetch      0 fetched
+[08:11:58] assess     0 to assess (profile v4)
+[08:11:58] assess     done, 0 tokens
+[08:12:06] briefs     0/1 pursue briefs available
+[08:12:06] briefs     took 8s
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[08:12:10] dash       dashboard.html rebuilt
+[08:12:10] done       completed in 21s

@@ -124,7 +124,7 @@ def card(a, dim=False):
         <span class="conf">{conf:.0%} confidence</span>
       </header>
       <h3><a href="{_esc(a.get('url') or '#')}" target="_blank">{_esc(a['title'])}</a></h3>
-      <p class="agency">{_esc(a.get('agency'))}</p>
+      <p class="agency"><span class="nid">{_esc(a.get('native_id'))}</span>{_esc(a.get('agency'))}</p>
       <p class="rationale">{_esc(a['rationale'])}</p>
       <div class="evidence">
         {'<div class="matched"><h4>Matched on</h4><ul>' + matched_html + '</ul></div>' if matched else ''}
@@ -180,14 +180,15 @@ def build():
     body = (
         opened_banner(just_opened)
         + section("Pursue", pursue, "Worth the proposal effort. Reasoning below.")
-        + section("Maybe", maybe, "Borderline — read the concerns.")
+        + section("Ruled out", skip, "Read in full, then rejected \u2014 each with the reason. This is the work you don\'t have to redo.")
+        + section("Maybe", maybe, "Borderline \u2014 read the concerns.")
         + section("Watching", watching, "Forecasted and relevant. Flagged early, before the synopsis is out.", watch=True)
-        + section("Skip", skip, "Assessed and passed over. Expand to see why each was rejected.", collapsed=True)
     )
 
     doc = TEMPLATE.replace("{{BODY}}", body).replace("{{STAMP}}", stamp) \
         .replace("{{NP}}", str(len(pursue))).replace("{{NW}}", str(len(watching))) \
-        .replace("{{NS}}", str(len(skip)))
+        .replace("{{NS}}", str(len(skip))) \
+        .replace("{{NR}}", str(len(pursue) + len(maybe) + len(skip)))
     with open(OUT, "w") as f:
         f.write(doc)
     print(f"wrote {OUT}: {len(pursue)} pursue, {len(maybe)} maybe, {len(watching)} watching, {len(skip)} skip")
@@ -239,6 +240,8 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .card h3 a{color:var(--ink);text-decoration:none}
 .card h3 a:hover{color:var(--accent)}
 .agency{color:var(--dim);font-size:12px;margin:0 0 12px}
+.nid{font-family:var(--mono);color:var(--ink);background:var(--line);
+  padding:2px 6px;border-radius:3px;margin-right:8px;font-size:11px}
 .rationale{font-family:var(--serif);font-size:15px;line-height:1.6;margin:0 0 14px}
 .evidence{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 @media(max-width:560px){.evidence{grid-template-columns:1fr}}
@@ -292,9 +295,10 @@ footer{color:var(--dim);font-size:12px;font-family:var(--mono);border-top:1px so
   <h1>Opportunity Brief</h1>
   <div class="meta">Hera Health Solutions · generated {{STAMP}}</div>
   <div class="summary">
-    <div class="stat go"><span class="n">{{NP}}</span><span class="l">Pursue</span></div>
+    <div class="stat"><span class="n">{{NR}}</span><span class="l">Read &amp; reasoned</span></div>
+    <div class="stat go"><span class="n">{{NP}}</span><span class="l">Worth pursuing</span></div>
+    <div class="stat"><span class="n">{{NS}}</span><span class="l">Ruled out, with reasons</span></div>
     <div class="stat watch"><span class="n">{{NW}}</span><span class="l">Watching</span></div>
-    <div class="stat"><span class="n">{{NS}}</span><span class="l">Skip</span></div>
   </div>
 </header>
 {{BODY}}

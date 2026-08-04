@@ -415,3 +415,149 @@ searching: "long acting reversible contraception"
 wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
 [08:12:10] dash       dashboard.html rebuilt
 [08:12:10] done       completed in 21s
+[08:01:10] start      pipeline run 2026-08-04T12:01:10.400066+00:00
+searching: "drug delivery"
+searching: "controlled release"
+searching: "sustained release"
+searching: "long acting"
+searching: implant
+searching: formulation
+searching: "drug device"
+searching: biodegradable
+searching: SBIR
+searching: STTR
+searching: "medication adherence"
+searching: "extended release"
+searching: "long acting injectable"
+searching: LAI
+searching: "long-acting release"
+searching: "depot formulation"
+searching: "implantable drug delivery"
+searching: "subdermal implant"
+searching: "drug device combination"
+searching: "biodegradable polymer"
+searching: bioresorbable
+searching: PLGA
+searching: "zero-order release"
+searching: "burst release"
+searching: reformulation
+searching: etonogestrel
+searching: LARC
+searching: "long acting reversible contraception"
+
+101 opportunities seen, 1 new
+[08:01:18] poll       1 new opportunities
+[08:01:18] poll       took 8s
+[08:01:18] fetch      1 missing descriptions
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Read timed out. (read timeout=30)
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+  request failed: HTTPSConnectionPool(host='api.grants.gov', port=443): Max retries exceeded with url: /v1/api/fetchOpportunity (Caused by NameResolutionError("HTTPSConnection(host='api.grants.gov', port=443): Failed to resolve 'api.grants.gov' ([Errno 8] nodename nor servname provided, or not known)"))
+[10:44:55] fetch      0 fetched
+[10:44:55] fetch      took 47s
+[10:44:58] assess     0 to assess (profile v4)
+[10:44:58] assess     done, 0 tokens
+[10:50:12] briefs     FAILED: [Errno 8] nodename nor servname provided, or not known
+Traceback (most recent call last):
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 250, in handle_request
+    resp = self._pool.handle_request(req)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 256, in handle_request
+    raise exc from None
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_sync/connection_pool.py", line 236, in handle_request
+    response = connection.handle_request(
+        pool_request.request
+    )
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 101, in handle_request
+    raise exc
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 78, in handle_request
+    stream = self._connect(request)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_sync/connection.py", line 124, in _connect
+    stream = self._network_backend.connect_tcp(**kwargs)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_backends/sync.py", line 207, in connect_tcp
+    with map_exceptions(exc_map):
+         ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/usr/local/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_internal/http_client.py", line 515, in get
+    response = self._client.get(path, timeout=effective_timeout, **kwargs)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 1053, in get
+    return self.request(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<7 lines>...
+        extensions=extensions,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 825, in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 914, in send
+    response = self._send_handling_auth(
+        request,
+    ...<2 lines>...
+        history=[],
+    )
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 942, in _send_handling_auth
+    response = self._send_handling_redirects(
+        request,
+        follow_redirects=follow_redirects,
+        history=history,
+    )
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 979, in _send_handling_redirects
+    response = self._send_single_request(request)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_client.py", line 1014, in _send_single_request
+    response = transport.handle_request(request)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_internal/http_client.py", line 212, in handle_request
+    raise last_exc
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_internal/http_client.py", line 176, in handle_request
+    response = self._transport.handle_request(request)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 249, in handle_request
+    with map_httpcore_exceptions():
+         ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/usr/local/Cellar/python@3.14/3.14.6/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 162, in __exit__
+    self.gen.throw(value)
+    ~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectError: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/ian/projects/agent-core/app/pipeline.py", line 26, in stage
+    return fn(*args, **kwargs)
+  File "/Users/ian/projects/agent-core/app/pipeline.py", line 160, in do_briefs
+    from app.detail.cache import refresh_pursues
+  File "/Users/ian/projects/agent-core/app/detail/cache.py", line 7, in <module>
+    from app.detail.brief import build_brief
+  File "/Users/ian/projects/agent-core/app/detail/brief.py", line 12, in <module>
+    from app.clients.vectorstore import index
+  File "/Users/ian/projects/agent-core/app/clients/vectorstore.py", line 5, in <module>
+    index = pc.Index(PINECONE_INDEX)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_client.py", line 871, in Index
+    return cast(_Index, self.index(name=name, host=host, pool_threads=pool_threads))
+                        ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_client.py", line 388, in index
+    resolved_host = self._resolve_index_host(name=name, host=host)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_client.py", line 449, in _resolve_index_host
+    desc = self.indexes.describe(name)
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/client/indexes.py", line 124, in describe
+    response = self._http.get(f"/indexes/{name}")
+  File "/Users/ian/projects/agent-core/venv/lib/python3.14/site-packages/pinecone/_internal/http_client.py", line 519, in get
+    raise PineconeConnectionError(str(exc)) from exc
+pinecone.errors.exceptions.PineconeConnectionError: [Errno 8] nodename nor servname provided, or not known
+[10:50:12] briefs     took 5s
+wrote dashboard.html: 1 pursue, 1 maybe, 4 watching, 8 skip
+[10:50:13] dash       dashboard.html rebuilt
+[10:50:13] done       completed in 10143s

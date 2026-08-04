@@ -23,7 +23,8 @@ def _days(due):
 
 def gather():
     conn = connect()
-    ids = {r["id"] for r in shortlist(verbose=False)}
+    _rows, _counts = shortlist(verbose=False, with_counts=True)
+    ids = {r["id"] for r in _rows}
 
     pv = conn.execute("SELECT MAX(version) v FROM profile").fetchone()["v"]
     assessed = conn.execute(
@@ -62,7 +63,8 @@ def gather():
     # Low verdict-confidence on a maybe means "closer to a real candidate",
     # so we surface those first and let clear near-misses sink.
     maybe.sort(key=lambda x: (x["confidence"] or 0))
-    return pursue, maybe, skip, [dict(r) for r in watching], [dict(r) for r in just_opened]
+    return (pursue, maybe, skip, [dict(r) for r in watching],
+            [dict(r) for r in just_opened], _counts)
 
 
 def brief_block(opp_id):
@@ -147,7 +149,7 @@ def watch_card(w):
 
 
 def build():
-    pursue, maybe, skip, watching, just_opened = gather()
+    pursue, maybe, skip, watching, just_opened, counts = gather()
     stamp = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
     def section(title, items, sub, collapsed=False, watch=False):
@@ -188,7 +190,8 @@ def build():
     doc = TEMPLATE.replace("{{BODY}}", body).replace("{{STAMP}}", stamp) \
         .replace("{{NP}}", str(len(pursue))).replace("{{NW}}", str(len(watching))) \
         .replace("{{NS}}", str(len(skip))) \
-        .replace("{{NR}}", str(len(pursue) + len(maybe) + len(skip)))
+        .replace("{{NR}}", str(len(pursue) + len(maybe) + len(skip))) \
+        .replace("{{NT}}", str(counts.get("scanned", 0)))
     with open(OUT, "w") as f:
         f.write(doc)
     print(f"wrote {OUT}: {len(pursue)} pursue, {len(maybe)} maybe, {len(watching)} watching, {len(skip)} skip")
@@ -295,9 +298,9 @@ footer{color:var(--dim);font-size:12px;font-family:var(--mono);border-top:1px so
   <h1>Opportunity Brief</h1>
   <div class="meta">Hera Health Solutions · generated {{STAMP}}</div>
   <div class="summary">
-    <div class="stat"><span class="n">{{NR}}</span><span class="l">Read &amp; reasoned</span></div>
+    <div class="stat"><span class="n">{{NT}}</span><span class="l">Tracked</span></div>
+    <div class="stat"><span class="n">{{NR}}</span><span class="l">Read in full</span></div>
     <div class="stat go"><span class="n">{{NP}}</span><span class="l">Worth pursuing</span></div>
-    <div class="stat"><span class="n">{{NS}}</span><span class="l">Ruled out, with reasons</span></div>
     <div class="stat watch"><span class="n">{{NW}}</span><span class="l">Watching</span></div>
   </div>
 </header>

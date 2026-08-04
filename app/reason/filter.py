@@ -16,7 +16,8 @@ def _days_left(due, today):
         return None
 
 
-def shortlist(include_forecasted=True, agencies=None, verbose=True):
+def shortlist(include_forecasted=True, agencies=None, verbose=True,
+              with_counts=False):
     """Cheap structured filter. No tokens, no API calls.
     Returns opportunity rows worth spending reasoning on."""
     conn = connect()
@@ -25,7 +26,7 @@ def shortlist(include_forecasted=True, agencies=None, verbose=True):
 
     kept, buckets = [], {
         "expired": 0, "too_soon": 0, "wrong_agency": 0,
-        "posted_ok": 0, "forecasted": 0, "no_date": 0,
+        "posted_ok": 0, "forecasted": 0, "no_date": 0, "off_topic": 0,
     }
 
     for r in rows:
@@ -72,6 +73,10 @@ def shortlist(include_forecasted=True, agencies=None, verbose=True):
         print(f"  {'SHORTLISTED':16} {len(kept)}")
 
     kept.sort(key=lambda x: (x["days_left"] is None, x["days_left"]))
+    if with_counts:
+        buckets["scanned"] = len(rows)
+        buckets["shortlisted"] = len(kept)
+        return kept, buckets
     return kept
 
 

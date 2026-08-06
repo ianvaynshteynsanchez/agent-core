@@ -18,7 +18,9 @@ CREATE TABLE IF NOT EXISTS opportunity (
   raw_json      TEXT,                    -- keep everything, parse later
   first_seen    TEXT NOT NULL,           -- freshness: "new since last poll"
   last_seen     TEXT NOT NULL,
-  embedded      INTEGER DEFAULT 0        -- has it been embedded yet?
+  embedded      INTEGER DEFAULT 0,       -- has it been embedded yet?
+  fetch_attempted TEXT,                    -- last description-fetch attempt
+  became_posted   TEXT                     -- when forecasted -> posted
 );
 
 CREATE INDEX IF NOT EXISTS idx_opp_status  ON opportunity(status, due_date);
@@ -60,4 +62,14 @@ CREATE TABLE IF NOT EXISTS assessment (
   tokens_used     INTEGER,               -- cost metering, from day one
   created_at      TEXT NOT NULL,
   UNIQUE(opportunity_id, profile_version)
+);
+
+-- Cached detail briefs. Expensive retrieval+LLM work, done once per opportunity.
+CREATE TABLE IF NOT EXISTS brief (
+  opportunity_id TEXT PRIMARY KEY REFERENCES opportunity(id),
+  native_id      TEXT,
+  status         TEXT,                    -- ok | not_published | error
+  answers        TEXT,                    -- JSON: eligibility/budget/deadlines/scope
+  url            TEXT,
+  created_at     TEXT
 );

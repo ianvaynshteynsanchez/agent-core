@@ -21,3 +21,6 @@ agent.db
 pipeline.log
 agent*.db
 *.db-journal
+pipeline.log
+agent*.db
+*.db-journal

@@ -1,11 +1,12 @@
 import html
+import os
 import json
 from datetime import date, datetime
 
 from app.db.store import connect
 from app.reason.filter import shortlist
 
-OUT = "dashboard.html"
+OUT = os.getenv("DASHBOARD_OUT", "dashboard.html")
 
 
 def _esc(s):

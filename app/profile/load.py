@@ -17,12 +17,13 @@ def active(conn=None):
     own = conn is None
     conn = conn or connect()
     row = conn.execute(
-        "SELECT version, content FROM profile ORDER BY version DESC LIMIT 1"
+        "SELECT version, content FROM profile WHERE client=? "
+        "ORDER BY version DESC LIMIT 1", (CLIENT,)
     ).fetchone()
     if own:
         conn.close()
     if not row:
-        raise SystemExit("No profile found.")
+        raise SystemExit(f"No profile found for client '{CLIENT}'.")
     return row["version"], row["content"]
 
 

@@ -15,8 +15,8 @@ conn = connect()
 row = conn.execute("SELECT MAX(version) v FROM profile").fetchone()
 version = (row["v"] or 0) + 1
 conn.execute(
-    "INSERT INTO profile (version, content, created_at, note) VALUES (?,?,?,?)",
-    (version, content, datetime.now(timezone.utc).isoformat(), note),
+    "INSERT INTO profile (version, client, content, created_at, note) VALUES (?,?,?,?,?)",
+    (version, CLIENT, content, datetime.now(timezone.utc).isoformat(), note),
 )
 conn.commit()
 conn.close()

@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS proposal (
 -- Human-editable capability profile. The config seam.
 CREATE TABLE IF NOT EXISTS profile (
   version       INTEGER PRIMARY KEY,
+  client        TEXT NOT NULL DEFAULT 'hera',  -- which subject this describes
   content       TEXT NOT NULL,           -- markdown: capabilities, tech, non-fits
   created_at    TEXT NOT NULL,
   note          TEXT

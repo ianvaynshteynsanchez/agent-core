@@ -24,3 +24,6 @@ agent*.db
 pipeline.log
 agent*.db
 *.db-journal
+.env
+.env.local
+.env.local.save

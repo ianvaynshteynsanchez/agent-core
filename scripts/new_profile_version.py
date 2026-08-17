@@ -4,6 +4,7 @@ import sys
 from datetime import datetime, timezone
 
 from app.db.store import connect
+from app.profile.load import CLIENT
 
 path = sys.argv[1] if len(sys.argv) > 1 else "profiles/v2.md"
 note = sys.argv[2] if len(sys.argv) > 2 else "profile update"

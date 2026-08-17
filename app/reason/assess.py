@@ -38,7 +38,10 @@ wants solved, not on surface keywords.
 CHOOSING THE VERDICT - this matters:
 - "pursue": the capability match is clear AND no disqualifying barrier.
 - "skip": definite mismatch in modality/capability, OR an explicit exclusion
-  or eligibility rule that rules the company out.
+  or eligibility rule that rules the applicant out. Eligibility includes whether
+  the applicant's institutional role and career stage permit holding this
+  mechanism at all - a mechanism the applicant cannot hold is a skip regardless
+  of how well the science fits.
 - "maybe": use whenever the answer depends on something you cannot determine
   from the text. Typical cases: capability fits but eligibility is unclear
   (prior-award requirements, prime vs partner rules); the solicitation is
@@ -54,8 +57,10 @@ specific unresolved question first in "concerns"."""
 
 
 def current_profile(conn):
+    from app.profile.load import CLIENT
     row = conn.execute(
-        "SELECT version, content FROM profile ORDER BY version DESC LIMIT 1"
+        "SELECT version, content FROM profile WHERE client=? "
+        "ORDER BY version DESC LIMIT 1", (CLIENT,)
     ).fetchone()
     if not row:
         raise SystemExit("No profile. Run app.profile.generate first.")

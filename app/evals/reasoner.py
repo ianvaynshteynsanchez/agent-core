@@ -20,7 +20,11 @@ def load_labels():
                 continue
             parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 2:
-                out.append((parts[0], parts[1].lower(), parts[2] if len(parts) > 2 else ""))
+                banned = []
+                if len(parts) > 3 and parts[3]:
+                    banned = [b.strip().lower() for b in parts[3].split(",") if b.strip()]
+                out.append((parts[0], parts[1].lower(),
+                            parts[2] if len(parts) > 2 else "", banned))
     return out
 
 
@@ -33,8 +37,8 @@ def run(live=False):
     pv, ptext = current_profile(conn)
     print(f"profile v{pv} | {len(labels)} labeled cases | {'re-running' if live else 'reading stored'}\n")
 
-    agree = disagree = missing = 0
-    for oid, expected, note in labels:
+    agree = disagree = missing = weak = 0
+    for oid, expected, note, banned in labels:
         opp = conn.execute("SELECT * FROM opportunity WHERE id=?", (oid,)).fetchone()
         if not opp:
             print(f"  MISSING  {oid}")
@@ -56,8 +60,15 @@ def run(live=False):
             actual, rationale = row["verdict"], row["rationale"]
 
         if actual == expected:
-            agree += 1
-            print(f"  PASS  {expected:6} {opp['title'][:55]}")
+            hits = [b for b in banned if b in (rationale or "").lower()]
+            if hits:
+                weak += 1
+                print(f"  WEAK  {expected:6} {opp['title'][:55]}")
+                print(f"        right verdict, bad reasoning: {', '.join(hits)}")
+                print(f"        model said: {rationale[:160]}...")
+            else:
+                agree += 1
+                print(f"  PASS  {expected:6} {opp['title'][:55]}")
         else:
             disagree += 1
             print(f"  FAIL  expected {expected:6} got {actual:6}  {opp['title'][:45]}")
@@ -67,9 +78,10 @@ def run(live=False):
 
     conn.commit()
     conn.close()
-    total = agree + disagree
+    total = agree + disagree + weak
     pct = (agree / total * 100) if total else 0
-    print(f"\n  {agree}/{total} agree ({pct:.0f}%)  |  {missing} missing")
+    print(f"\n  {agree}/{total} clean ({pct:.0f}%)  |  "
+          f"{disagree} wrong verdict  |  {weak} weak reasoning  |  {missing} missing")
     return pct
 
 

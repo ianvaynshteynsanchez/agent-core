@@ -7,6 +7,9 @@ from app.db.store import connect
 from app.reason.filter import shortlist
 
 OUT = os.getenv("DASHBOARD_OUT", "dashboard.html")
+_LABELS = {"hera": "Hera Health Solutions", "soni": "Viren Soni, PhD"}
+CLIENT_LABEL = _LABELS.get(os.getenv("CLIENT", "hera"),
+                           os.getenv("CLIENT", "hera").title())
 
 
 def _esc(s):
@@ -192,7 +195,8 @@ def build():
         .replace("{{NP}}", str(len(pursue))).replace("{{NW}}", str(len(watching))) \
         .replace("{{NS}}", str(len(skip))) \
         .replace("{{NR}}", str(len(pursue) + len(maybe) + len(skip))) \
-        .replace("{{NT}}", str(counts.get("scanned", 0)))
+        .replace("{{NT}}", str(counts.get("scanned", 0))) \
+        .replace("{{CLIENT}}", CLIENT_LABEL)
     with open(OUT, "w") as f:
         f.write(doc)
     print(f"wrote {OUT}: {len(pursue)} pursue, {len(maybe)} maybe, {len(watching)} watching, {len(skip)} skip")
@@ -201,7 +205,7 @@ def build():
 TEMPLATE = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Opportunity Brief — Hera Health</title>
+<title>Opportunity Brief — {{CLIENT}}</title>
 <style>
 :root{
   --bg:#0f1216; --panel:#161b22; --line:#232a33; --ink:#e6edf3;
@@ -297,7 +301,7 @@ footer{color:var(--dim);font-size:12px;font-family:var(--mono);border-top:1px so
 </style></head><body><div class="wrap">
 <header class="top">
   <h1>Opportunity Brief</h1>
-  <div class="meta">Hera Health Solutions · generated {{STAMP}}</div>
+  <div class="meta">{{CLIENT}} · generated {{STAMP}}</div>
   <div class="summary">
     <div class="stat"><span class="n">{{NT}}</span><span class="l">Tracked</span></div>
     <div class="stat"><span class="n">{{NR}}</span><span class="l">Read in full</span></div>

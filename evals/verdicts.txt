@@ -16,8 +16,8 @@ grants_gov:349654 | skip | condensed matter physics. Leaked via "materials"/"pol
 grants_gov:346204 | skip | circuits and sensing. Obvious gate leak, must be rejected.
 
 # --- the pursues: must NOT be over-skipped ---
-grants_gov:359671 | pursue | NIH SBIR parent. Right mechanism, right stage, right business model.
-grants_gov:359758 | pursue | SBIR Phase IIB. Later-stage commercialization support fits licensing model.
+grants_gov:359671 | maybe | NIH SBIR parent. Capability fits cleanly, but parent announcements always leave something to confirm - an honest maybe the reader resolves in a minute.
+grants_gov:359758 | skip | SBIR Phase IIB requires a prior NIH SBIR/STTR award. Hera has NSF only, so eligibility overrides the capability fit.
 
 # --- genuinely debatable: flag if you disagree with the model ---
 grants_gov:359669 | skip  | CRP commercialization. Model said skip. Arguably a maybe - it IS commercialization support, but requires prior NIH SBIR (Hera's is NSF). Eligibility question, not fit question.

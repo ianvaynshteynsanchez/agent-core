@@ -5,6 +5,7 @@ Labels live in evals/verdicts.txt, one per line:
 Lines starting with # are ignored.
 """
 import sys
+import time
 from app.db.store import connect
 from app.reason.assess import assess_one, current_profile
 
@@ -46,7 +47,22 @@ def run(live=False):
             continue
 
         if live:
-            data, _ = assess_one(conn, dict(opp), pv, ptext)
+            data = None
+            for attempt in range(5):
+                try:
+                    data, _ = assess_one(conn, dict(opp), pv, ptext)
+                    break
+                except Exception as e:
+                    if "rate_limit" in str(e) or "429" in str(e):
+                        wait = 8 * (attempt + 1)
+                        print(f"        rate limited, waiting {wait}s")
+                        time.sleep(wait)
+                        continue
+                    raise
+            if data is None:
+                print(f"  RATELIMIT {opp['title'][:50]}")
+                missing += 1
+                continue
             actual = (data.get("verdict") or "").lower()
             rationale = data.get("rationale", "")
         else:

@@ -1,7 +1,8 @@
 """Measure reasoner agreement against hand-labeled verdicts.
 
-Labels live in evals/verdicts.txt, one per line:
-    <opportunity_id> | <expected verdict> | <note>
+Labels live in evals/verdicts.txt (or evals/verdicts-<client>.txt for
+non-default clients), one per line:
+    <opportunity_id> | <expected verdict> | <note> | <phrases the rationale must not contain>
 Lines starting with # are ignored.
 """
 import sys
@@ -9,7 +10,10 @@ import time
 from app.db.store import connect
 from app.reason.assess import assess_one, current_profile
 
-LABELS = "evals/verdicts.txt"
+import os
+_CLIENT = os.getenv("CLIENT", "hera")
+LABELS = ("evals/verdicts.txt" if _CLIENT == "hera"
+          else f"evals/verdicts-{_CLIENT}.txt")
 
 
 def load_labels():

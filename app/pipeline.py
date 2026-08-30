@@ -78,7 +78,7 @@ def do_fetch():
     return ok
 
 
-def do_assess():
+def do_assess(_shortlist=None):
     """Assess only shortlisted opportunities without a current assessment."""
     from app.reason.filter import shortlist
     from app.reason.assess import assess_one, current_profile
@@ -88,7 +88,7 @@ def do_assess():
     done = {r["opportunity_id"] for r in conn.execute(
         "SELECT opportunity_id FROM assessment WHERE profile_version=?", (pv,))}
 
-    todo = [r for r in shortlist(verbose=False)
+    todo = [r for r in (_shortlist or shortlist(verbose=False))
             if r.get("description") and r["id"] not in done]
     log("assess", f"{len(todo)} to assess (profile v{pv})")
 
@@ -134,10 +134,10 @@ def do_prune_versions():
     return n
 
 
-def do_prune():
+def do_prune(_shortlist=None):
     """Drop assessments for opportunities no longer shortlisted (expired etc)."""
     from app.reason.filter import shortlist
-    ids = {r["id"] for r in shortlist(verbose=False)}
+    ids = {r["id"] for r in (_shortlist or shortlist(verbose=False))}
     conn = connect()
     allrows = [r["opportunity_id"] for r in
                conn.execute("SELECT opportunity_id FROM assessment")]
@@ -195,10 +195,13 @@ def run():
 
     stage("net", wait_for_dns)
     stage("poll", do_poll)
+    from app.reason.filter import shortlist as _sl
+    _cached = _sl(verbose=False)
+    log("shortlist", f"{len(_cached)} shortlisted (computed once)")
     stage("fetch", do_fetch)
-    stage("prune", do_prune)
+    stage("prune", do_prune, _cached)
     stage("prune-v", do_prune_versions)
-    stage("assess", do_assess)
+    stage("assess", do_assess, _cached)
     stage("briefs", do_briefs)
     stage("dash", do_dashboard)
 

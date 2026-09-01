@@ -5,6 +5,9 @@ non-default clients), one per line:
     <opportunity_id> | <expected verdict> | <note> | <phrases the rationale must not contain>
 Lines starting with # are ignored.
 """
+import os
+os.environ.setdefault("ASSESS_TEMP", "0")  # evals must be reproducible
+
 import sys
 import time
 from app.db.store import connect

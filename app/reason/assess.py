@@ -5,6 +5,9 @@ from app.clients.llm import client
 from app.config import LLM_MODEL
 from app.db.store import connect
 
+import os
+ASSESS_TEMP = float(os.getenv("ASSESS_TEMP", "0.1"))
+
 PROMPT = """You are a grant strategist deciding whether a company should spend
 time pursuing a funding opportunity. Be skeptical. Most opportunities are NOT a
 good fit, and recommending a bad one wastes the company's scarce proposal effort.
@@ -90,7 +93,7 @@ def assess_one(conn, opp, profile_version, profile_text):
     resp = client.chat.completions.create(
         model=LLM_MODEL,
         messages=[{"role": "user", "content": prompt}],
-        temperature=0.1,
+        temperature=ASSESS_TEMP,
         response_format={"type": "json_object"},
     )
     raw = resp.choices[0].message.content

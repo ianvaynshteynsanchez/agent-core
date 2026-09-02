@@ -36,7 +36,32 @@ def load_labels():
     return out
 
 
-def run(live=False):
+def _assess_with_retry(conn, opp, pv, ptext):
+    """One assessment with rate-limit backoff. Returns (verdict, rationale) or None."""
+    for attempt in range(5):
+        try:
+            data, _ = assess_one(conn, dict(opp), pv, ptext)
+            return (data.get("verdict") or "").lower(), data.get("rationale", "")
+        except Exception as e:
+            if "rate_limit" in str(e) or "429" in str(e):
+                wait = 8 * (attempt + 1)
+                print(f"        rate limited, waiting {wait}s")
+                time.sleep(wait)
+                continue
+            raise
+    return None
+
+
+def _outcome(actual, expected, rationale, banned):
+    """PASS | FAIL | WEAK for one assessment."""
+    if actual != expected:
+        return "FAIL"
+    if [b for b in banned if b in (rationale or "").lower()]:
+        return "WEAK"
+    return "PASS"
+
+
+def run(live=False, runs=1):
     labels = load_labels()
     if not labels:
         raise SystemExit(f"No labels in {LABELS}")
@@ -46,6 +71,7 @@ def run(live=False):
     print(f"profile v{pv} | {len(labels)} labeled cases | {'re-running' if live else 'reading stored'}\n")
 
     agree = disagree = missing = weak = 0
+    unstable = []
     for oid, expected, note, banned in labels:
         opp = conn.execute("SELECT * FROM opportunity WHERE id=?", (oid,)).fetchone()
         if not opp:
@@ -54,24 +80,33 @@ def run(live=False):
             continue
 
         if live:
-            data = None
-            for attempt in range(5):
-                try:
-                    data, _ = assess_one(conn, dict(opp), pv, ptext)
+            results = []
+            for _ in range(runs):
+                got = _assess_with_retry(conn, opp, pv, ptext)
+                if got is None:
                     break
-                except Exception as e:
-                    if "rate_limit" in str(e) or "429" in str(e):
-                        wait = 8 * (attempt + 1)
-                        print(f"        rate limited, waiting {wait}s")
-                        time.sleep(wait)
-                        continue
-                    raise
-            if data is None:
+                results.append(got)
+            if not results:
                 print(f"  RATELIMIT {opp['title'][:50]}")
                 missing += 1
                 continue
-            actual = (data.get("verdict") or "").lower()
-            rationale = data.get("rationale", "")
+            outcomes = [_outcome(a, expected, r, banned) for a, r in results]
+            majority = max(set(outcomes), key=outcomes.count)
+            if runs > 1:
+                n = outcomes.count(majority)
+                tag = f"({n}/{runs} stable)" if n == runs else \
+                      f"({n}/{runs} - also {', '.join(sorted(set(outcomes) - {majority}))})"
+                if n < runs:
+                    unstable.append(opp["title"][:45])
+                print(f"  {majority:5} {expected:6} {opp['title'][:45]} {tag}")
+                if majority == "PASS":
+                    agree += 1
+                elif majority == "WEAK":
+                    weak += 1
+                else:
+                    disagree += 1
+                continue
+            actual, rationale = results[0]
         else:
             row = conn.execute(
                 "SELECT verdict, rationale FROM assessment WHERE opportunity_id=? "
@@ -109,4 +144,7 @@ def run(live=False):
 
 
 if __name__ == "__main__":
-    run(live="--live" in sys.argv)
+    _n = 1
+    if "--runs" in sys.argv:
+        _n = int(sys.argv[sys.argv.index("--runs") + 1])
+    run(live="--live" in sys.argv, runs=_n)

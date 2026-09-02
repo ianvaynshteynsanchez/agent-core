@@ -221,8 +221,9 @@ evals/               labeled cases
 
 - One capability profile per database. Multiple subjects are supported by
   separate database files rather than tenancy within one.
-- The eval set has decayed: 7 of 11 labeled cases reference opportunities that no
-  longer exist in the database.
+- One of eleven labeled cases is unstable across runs. In stored-verdict mode,
+  cases that have fallen out of the current shortlist show as unassessed; use
+  `--live` to replay them against the model directly.
 - Vocabulary and trap terms are hand-written per subject. The system does not
   expand or suggest terms, so a term nobody thinks to write does not exist to the
   system.

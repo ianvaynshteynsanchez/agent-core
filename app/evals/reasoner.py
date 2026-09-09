@@ -43,7 +43,12 @@ def _assess_with_retry(conn, opp, pv, ptext):
             data, _ = assess_one(conn, dict(opp), pv, ptext)
             return (data.get("verdict") or "").lower(), data.get("rationale", "")
         except Exception as e:
-            if "rate_limit" in str(e) or "429" in str(e):
+            msg = str(e)
+            if ("json_validate_failed" in msg or "Failed to generate JSON" in msg):
+                print("        malformed JSON from model, retrying")
+                time.sleep(2)
+                continue
+            if "rate_limit" in msg or "429" in msg:
                 wait = 8 * (attempt + 1)
                 print(f"        rate limited, waiting {wait}s")
                 time.sleep(wait)

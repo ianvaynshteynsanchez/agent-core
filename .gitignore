@@ -27,3 +27,7 @@ agent*.db
 .env
 .env.local
 .env.local.save
+profiles/soni-*.md
+evals/verdicts-soni.txt
+profiles/soni-*.md
+evals/verdicts-soni.txt

@@ -103,10 +103,6 @@ def do_assess(_shortlist=None):
                 break
             except Exception as e:
                 msg = str(e)
-                if "json_validate_failed" in msg or "Failed to generate JSON" in msg:
-                    log("assess", "  malformed JSON from model, retrying")
-                    time.sleep(2)
-                    continue
                 if "rate_limit" in msg or "429" in msg:
                     if "per day" in msg or "TPD" in msg:
                         log("assess", "  DAILY TOKEN LIMIT reached - stopping assess stage")

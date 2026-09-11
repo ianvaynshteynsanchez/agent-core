@@ -72,5 +72,6 @@ CREATE TABLE IF NOT EXISTS brief (
   status         TEXT,                    -- ok | not_published | error
   answers        TEXT,                    -- JSON: eligibility/budget/deadlines/scope
   url            TEXT,
-  created_at     TEXT
+  created_at     TEXT,
+  attempts       INTEGER DEFAULT 0        -- failed brief fetches, drives backoff
 );

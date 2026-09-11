@@ -8,6 +8,47 @@ from app.detail.brief import build_brief
 from app.detail.fetch import fetch_full_text
 
 
+RETRY_AFTER_DAYS = [3, 7, 14, 30]
+
+
+def _attempts(conn, opp_id):
+    row = conn.execute(
+        "SELECT attempts FROM brief WHERE opportunity_id=?", (opp_id,)).fetchone()
+    return (row["attempts"] or 0) if row else 0
+
+
+def _should_retry(conn, opp_id):
+    """True if an unpublished brief is due for another attempt.
+
+    A became_posted event inside the last 7 days always wins: that transition
+    is the thing we are waiting for, and must never be delayed by the backoff.
+    """
+    row = conn.execute(
+        "SELECT b.attempts, b.created_at, o.became_posted "
+        "FROM brief b JOIN opportunity o ON o.id = b.opportunity_id "
+        "WHERE b.opportunity_id=?", (opp_id,)).fetchone()
+    if not row:
+        return True
+
+    if row["became_posted"]:
+        try:
+            age = (datetime.now(timezone.utc)
+                   - datetime.fromisoformat(row["became_posted"])).days
+            if age <= 7:
+                return True
+        except (ValueError, TypeError):
+            return True   # unparseable timestamp: retry rather than suppress
+
+    n = row["attempts"] or 0
+    wait = RETRY_AFTER_DAYS[min(n, len(RETRY_AFTER_DAYS) - 1)]
+    try:
+        since = (datetime.now(timezone.utc)
+                 - datetime.fromisoformat(row["created_at"])).days
+    except (ValueError, TypeError):
+        return True
+    return since >= wait
+
+
 def get_or_build(opp_id, native_id, force=False):
     conn = connect()
     if not force:
@@ -25,9 +66,11 @@ def get_or_build(opp_id, native_id, force=False):
     _, url, status = fetch_full_text(native_id)
     if status != "ok":
         conn.execute(
-            "INSERT OR REPLACE INTO brief VALUES (?,?,?,?,?,?)",
+            "INSERT OR REPLACE INTO brief "
+            "(opportunity_id, native_id, status, answers, url, created_at, attempts) "
+            "VALUES (?,?,?,?,?,?,?)",
             (opp_id, native_id, status, None, url,
-             datetime.now(timezone.utc).isoformat()),
+             datetime.now(timezone.utc).isoformat(), _attempts(conn, opp_id) + 1),
         )
         conn.commit()
         conn.close()
@@ -38,9 +81,11 @@ def get_or_build(opp_id, native_id, force=False):
     brief = build_brief(opp_id, native_id)
     conn = connect()
     conn.execute(
-        "INSERT OR REPLACE INTO brief VALUES (?,?,?,?,?,?)",
+        "INSERT OR REPLACE INTO brief "
+        "(opportunity_id, native_id, status, answers, url, created_at, attempts) "
+        "VALUES (?,?,?,?,?,?,?)",
         (opp_id, native_id, "ok", json.dumps(brief["answers"]),
-         brief["url"], datetime.now(timezone.utc).isoformat()),
+         brief["url"], datetime.now(timezone.utc).isoformat(), 0),
     )
     conn.commit()
     conn.close()
@@ -61,9 +106,13 @@ def refresh_pursues():
     built = 0
     for r in rows:
         before = get_or_build(r["id"], r["native_id"])
-        # retry unpublished ones (they may have gone live since last attempt)
+        # retry unpublished ones only when they are due (or just went live)
         if before["status"] != "ok":
-            before = get_or_build(r["id"], r["native_id"], force=True)
+            c = connect()
+            due = _should_retry(c, r["id"])
+            c.close()
+            if due:
+                before = get_or_build(r["id"], r["native_id"], force=True)
         if before["status"] == "ok":
             built += 1
     return built, len(rows)

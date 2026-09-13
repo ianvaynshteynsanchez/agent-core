@@ -118,7 +118,7 @@ def _clocks_cached():
     return _CLOCK_CACHE
 
 
-def clock_flag(due, title="", native_id="", verdict=""):
+def clock_flag(due):
     """Marker if this deadline sits at or past an eligibility window.
 
     Three cases: clear of every window (no marker), inside the uncertain band
@@ -126,17 +126,13 @@ def clock_flag(due, title="", native_id="", verdict=""):
     close (flag as outside). Marks only - never reorders or hides, because the
     dates are hand-entered and a wrong one should be visible, not silent.
     """
-    if not due or verdict not in ("pursue", "maybe"):
+    if not due:
         return ""
     items = _clocks_cached()
     if not items:
         return ""
     out = ""
-    hay = f"{title} {native_id}".lower()
     for c in items:
-        terms = c.get("match") or []
-        if terms and not any(t in hay for t in terms):
-            continue
         latest, earliest = c.get("latest"), c.get("earliest")
         if latest and due >= latest:
             out += (f"<div class='clock-flag past'>\u26a0 Due after your "
@@ -179,7 +175,7 @@ def card(a, dim=False):
         {'<div class="matched"><h4>Matched on</h4><ul>' + matched_html + '</ul></div>' if matched else ''}
         {'<div class="concerns"><h4>Concerns</h4><ul>' + concerns_html + '</ul></div>' if concerns else ''}
       </div>
-      {clock_flag(a.get('due_date'), a.get('title',''), a.get('native_id',''), a.get('verdict',''))}
+      {clock_flag(a.get('due_date'))}
       {brief_block(a.get('id',''))}
     </article>"""
 

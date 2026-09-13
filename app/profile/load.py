@@ -100,7 +100,11 @@ def clocks(md=None):
         if len(parts) < 3:
             continue
         name, early, late = parts[0], parts[1], parts[2]
-        note = parts[3] if len(parts) > 3 else ""
+        if len(parts) > 4:
+            match = [m.strip().lower() for m in parts[3].split(",") if m.strip()]
+            note = parts[4]
+        else:
+            match, note = [], (parts[3] if len(parts) > 3 else "")
         try:
             late_d = date.fromisoformat(late)
         except ValueError:
@@ -115,6 +119,7 @@ def clocks(md=None):
             "latest": late_d.isoformat(),
             "days_left": (late_d - date.today()).days,
             "days_left_earliest": (early_d - date.today()).days if early_d else None,
+            "match": match,
             "note": note,
         })
     return sorted(out, key=lambda c: c["days_left"])

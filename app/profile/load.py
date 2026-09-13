@@ -81,6 +81,45 @@ def relevance_terms(md=None):
     return out
 
 
+def clocks(md=None):
+    """Eligibility windows from the profile's '## Clocks' section.
+
+    Format per line: name | earliest close | latest close | note
+    An empty earliest means a single known date. Returns a list of dicts with
+    days remaining computed against the latest close.
+    """
+    from datetime import date
+    md = md or active()[1]
+    block = _section(md, "Clocks")
+    out = []
+    for line in block.splitlines():
+        line = line.strip().lstrip("-* ").strip()
+        if not line or "|" not in line:
+            continue
+        parts = [p.strip() for p in line.split("|")]
+        if len(parts) < 3:
+            continue
+        name, early, late = parts[0], parts[1], parts[2]
+        note = parts[3] if len(parts) > 3 else ""
+        try:
+            late_d = date.fromisoformat(late)
+        except ValueError:
+            continue
+        try:
+            early_d = date.fromisoformat(early) if early else None
+        except ValueError:
+            early_d = None
+        out.append({
+            "name": name,
+            "earliest": early_d.isoformat() if early_d else None,
+            "latest": late_d.isoformat(),
+            "days_left": (late_d - date.today()).days,
+            "days_left_earliest": (early_d - date.today()).days if early_d else None,
+            "note": note,
+        })
+    return sorted(out, key=lambda c: c["days_left"])
+
+
 def trap_terms(md=None):
     md = md or active()[1]
     return [t.lower() for t in _terms(_section(md, "Vocabulary"), "Trap terms")]

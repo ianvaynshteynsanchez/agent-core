@@ -152,35 +152,6 @@ def watch_card(w):
     </article>"""
 
 
-def clocks_banner():
-    """Eligibility windows, if the profile declares any."""
-    try:
-        from app.profile.load import clocks as _clocks
-        items = _clocks()
-    except Exception:
-        return ""
-    if not items:
-        return ""
-    rows = ""
-    for c in items:
-        d = c["days_left"]
-        de = c.get("days_left_earliest")
-        if de and de != d:
-            span = f"{de // 30}\u2013{d // 30} months left"
-        else:
-            span = f"~{d // 30} months left"
-        urgent = " urgent" if d < 365 else ""
-        window = (f"{c['earliest']} to {c['latest']}" if c["earliest"]
-                  else f"by {c['latest']}")
-        rows += (f"<li><span class='cl-name'>{_esc(c['name'])}</span>"
-                 f"<span class='cl-span{urgent}'>{span}</span>"
-                 f"<span class='cl-meta'>{_esc(window)} \u00b7 {_esc(c['note'])}</span></li>")
-    return (f"<section class='clocks'><h2>Eligibility windows</h2>"
-            f"<p class='sub'>These close whether or not anything is open. "
-            f"A window that expires removes every opportunity behind it.</p>"
-            f"<ul>{rows}</ul></section>")
-
-
 def build():
     pursue, maybe, skip, watching, just_opened, counts = gather()
     stamp = datetime.now().strftime("%B %d, %Y at %I:%M %p")
@@ -213,8 +184,7 @@ def build():
                 f"<ul>{rows}</ul></section>")
 
     body = (
-        clocks_banner()
-        + opened_banner(just_opened)
+        opened_banner(just_opened)
         + section("Pursue", pursue, "Worth the proposal effort. Reasoning below.")
         + section("Ruled out", skip, "Read in full, then rejected \u2014 each with the reason. This is the work you don\'t have to redo.")
         + section("Maybe", maybe, "Borderline \u2014 read the concerns.")
@@ -288,16 +258,6 @@ header.top .meta{color:var(--dim);font-family:var(--mono);font-size:12px}
 .evidence li{margin-bottom:3px}
 .concerns h4{color:var(--warn)}
 .card.watch{border-style:dashed}
-.clocks{background:rgba(88,166,255,.06);border:1px solid var(--line);
-  border-radius:12px;padding:18px 22px;margin:0 0 28px}
-.clocks h2{font-family:var(--serif);font-size:18px;margin:0 0 4px}
-.clocks ul{list-style:none;margin:12px 0 0;padding:0}
-.clocks li{padding:10px 0;border-top:1px solid var(--line);display:grid;
-  grid-template-columns:1fr auto;gap:4px 16px}
-.cl-name{font-weight:600;font-size:15px}
-.cl-span{font-family:var(--mono);font-size:13px;color:var(--accent);text-align:right}
-.cl-span.urgent{color:var(--warn)}
-.cl-meta{grid-column:1/-1;color:var(--dim);font-size:12px;line-height:1.5}
 .opened{background:rgba(63,185,80,.08);border:1px solid var(--go);
   border-radius:12px;padding:20px 22px;margin:0 0 32px}
 .opened h2{font-family:var(--serif);font-size:20px;margin:0;color:var(--go);

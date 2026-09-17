@@ -197,13 +197,6 @@ def run():
     started = datetime.now(timezone.utc)
     log("start", f"pipeline run {started.isoformat()}")
 
-    try:
-        from app.db.check import drift as _drift
-        for _p in _drift():
-            log("schema", f"DRIFT: {_p}")
-    except Exception as _e:
-        log("schema", f"check failed: {_e}")
-
     stage("net", wait_for_dns)
     stage("poll", do_poll)
     from app.reason.filter import shortlist as _sl

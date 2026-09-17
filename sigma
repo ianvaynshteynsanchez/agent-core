@@ -1,0 +1,38 @@
+//sketch instance variables will show up
+//in the debugger
+int foo;
+int bar;
+Thing t1,t2;
+void setup(){
+ size(300,300);
+ t1 = new Thing(40,30);
+ t2 = new Thing(20,60);
+ foo = 50;
+ bar = 20;
+}
+//clicking step will go through lines 15-21 one at a time
+void draw(){
+  background(255);
+  t1.update();//add breakpoint
+  t2.update();//add breakpoint
+  t1.display();
+  t2.display();
+  println(frameCount);
+}//end of draw updates the screen.
+
+class Thing{
+ int x,y;
+ Thing(int x, int y){
+  this.x = x;
+  this.y = y;
+ }
+ void update(){
+    x += random(3)-1;
+    y += random(3)-1;
+ }
+ void display(){
+  fill(0);
+  ellipse(x,y,20,20);
+  text("x: "+x+"\ty: "+y,x,y);
+ }
+}
